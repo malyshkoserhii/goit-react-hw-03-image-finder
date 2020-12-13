@@ -1,28 +1,28 @@
 import { Component } from 'react';
 
-import Searchbar from './Searchbar/Searchbar';
+import Searchbar from './components/Searchbar/Searchbar';
+import ImageGallery from './components/ImageGallery/';
+import ImageGalleryItem from './components/ImageGalleryItem/';
+import Button from './components/Button';
 
 class App extends Component {
   state = {
     request: null,
     error: null,
     images: [],
+    page: 1,
     status: 'idle',
   };
 
-  page = 1;
-
   componentDidUpdate(prevProps, prevState) {
     const prevRequest = prevState.request;
-    // console.log('prevRequest', prevRequest);
-
     const nextRequest = this.state.request;
-    // console.log('nextRequest', nextRequest);
-    // console.log(prevRequest === nextRequest);
+    const prevPage = prevState.page;
+    const nextPage = this.state.page;
 
-    if (prevRequest !== nextRequest) {
+    if (prevRequest !== nextRequest || prevPage !== nextPage) {
       const key = '18518367-60788b25c9bdd8e2c754a390a';
-      const url = `https://pixabay.com/api/?q=${nextRequest}&page=${this.page}&key=${key}&image_type=photo&orientation=horizontal&per_page=12`;
+      const url = `https://pixabay.com/api/?q=${nextRequest}&page=${nextPage}&key=${key}&image_type=photo&orientation=horizontal&per_page=5`;
 
       fetch(url)
         .then(response => {
@@ -34,19 +34,34 @@ class App extends Component {
             new Error(`Your response about ${nextRequest} is not found`),
           );
         })
-        .then(hits => this.setState({ images: hits, status: 'resolved' }))
+        .then(({ hits }) => this.setState({ images: hits, status: 'resolved' }))
         .catch(error => this.setState({ error, status: 'rejected' }));
     }
-
-    console.log('this.state.images', this.state.images);
   }
+
+  handleNextPage = () => {
+    this.setState(prevPage => {
+      console.log('prevPage', prevPage);
+      return { page: prevPage.page + 1 };
+    });
+  };
 
   handleFormSubmit = request => {
     this.setState({ request });
   };
 
   render() {
-    return <Searchbar onSubmitForm={this.handleFormSubmit} />;
+    const { images } = this.state;
+
+    return (
+      <>
+        <Searchbar onSubmitForm={this.handleFormSubmit} />
+        <ImageGallery>
+          <ImageGalleryItem images={images} />
+        </ImageGallery>
+        <Button onNextPage={this.handleNextPage} />
+      </>
+    );
   }
 }
 
