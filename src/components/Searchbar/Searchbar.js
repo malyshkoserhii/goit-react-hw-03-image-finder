@@ -14,7 +14,6 @@ class Searchbar extends Component {
     e.preventDefault();
 
     const { search } = this.state;
-    console.log('search from Form', search);
     this.props.onSubmitForm(search);
   };
 
