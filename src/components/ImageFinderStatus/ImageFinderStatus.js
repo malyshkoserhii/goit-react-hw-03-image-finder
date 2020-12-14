@@ -9,7 +9,7 @@ import Button from '../Button';
 
 class ImageFinderStatus extends Component {
   state = {
-    hits: [],
+    images: [],
     error: null,
     page: 1,
     status: 'idle',
@@ -20,10 +20,6 @@ class ImageFinderStatus extends Component {
     const nextRequest = this.props.request;
     const prevPage = prevState.page;
     const nextPage = this.state.page;
-    // const prevImages = prevState.hits;
-    // console.log('prevImages', prevImages);
-    // const nextImages = this.props.images;
-    // console.log('nextImages', nextImages);
 
     if (prevRequest !== nextRequest || prevPage !== nextPage) {
       const key = '18518367-60788b25c9bdd8e2c754a390a';
@@ -41,7 +37,12 @@ class ImageFinderStatus extends Component {
             new Error(`Your response about ${nextRequest} is not found`),
           );
         })
-        .then(({ hits }) => this.setState({ hits, status: 'resolved' }))
+        .then(data =>
+          this.setState(prevState => ({
+            images: [...prevState.images, ...data.hits],
+            status: 'resolved',
+          })),
+        )
         .catch(error => this.setState({ error, status: 'rejected' }));
     }
   }
@@ -57,7 +58,7 @@ class ImageFinderStatus extends Component {
   };
 
   render() {
-    const { hits, error, status } = this.state;
+    const { images, error, status } = this.state;
 
     if (status === 'idle') {
       return <div></div>;
@@ -81,7 +82,7 @@ class ImageFinderStatus extends Component {
       return (
         <>
           <ImageGallery>
-            <ImageGalleryItem images={hits} />
+            <ImageGalleryItem images={images} />
           </ImageGallery>
           <Button onNextPage={this.handleNextPage} />
         </>
