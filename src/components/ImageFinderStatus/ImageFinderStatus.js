@@ -10,51 +10,49 @@ import Button from '../Button';
 class ImageFinderStatus extends Component {
   state = {
     images: [],
+    currentPage: 1,
+    searchQuery: '',
     error: null,
-    page: 1,
     status: 'idle',
   };
 
-  componentDidUpdate(prevProps, prevState) {
-    const prevRequest = prevProps.request;
-    const nextRequest = this.props.request;
-    const prevPage = prevState.page;
-    const nextPage = this.state.page;
+  // componentDidUpdate(prevProps, prevState) {
+  //   const prevRequest = prevProps.request;
+  //   const nextRequest = this.props.request;
+  //   console.log(nextRequest);
 
-    if (prevRequest !== nextRequest || prevPage !== nextPage) {
-      const key = '18518367-60788b25c9bdd8e2c754a390a';
-      const url = `https://pixabay.com/api/?q=${nextRequest}&page=${nextPage}&key=${key}&image_type=photo&orientation=horizontal&per_page=5`;
+  //   if (prevRequest !== nextRequest) {
+  //     this.setState({ query: nextRequest });
+  //     this.fetchImages(nextRequest);
+  //   }
+  // }
 
-      this.setState({ status: 'pending' });
+  fetchImages = query => {
+    query = this.state.query;
 
-      fetch(url)
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          }
+    const { page } = this.state;
 
-          return Promise.reject(
-            new Error(`Your response about ${nextRequest} is not found`),
-          );
-        })
-        .then(data =>
-          this.setState(prevState => ({
-            images: [...prevState.images, ...data.hits],
-            status: 'resolved',
-          })),
-        )
-        .catch(error => this.setState({ error, status: 'rejected' }));
-    }
-  }
+    const key = '18518367-60788b25c9bdd8e2c754a390a';
+    const url = `https://pixabay.com/api/?q=${query}&page=${page}&key=${key}&image_type=photo&orientation=horizontal&per_page=5`;
 
-  handleNextPage = () => {
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-    }));
-  };
+    fetch(url)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
 
-  handleFormSubmit = request => {
-    this.setState({ request });
+        return Promise.reject(
+          new Error(`Your response about ${query} is not found`),
+        );
+      })
+      .then(data =>
+        this.setState(prevState => ({
+          images: [...prevState.images, ...data.hits],
+          page: prevState.page + 1,
+          status: 'resolved',
+        })),
+      )
+      .catch(error => this.setState({ error, status: 'rejected' }));
   };
 
   render() {
@@ -84,7 +82,7 @@ class ImageFinderStatus extends Component {
           <ImageGallery>
             <ImageGalleryItem images={images} />
           </ImageGallery>
-          <Button onNextPage={this.handleNextPage} />
+          <Button onFetch={this.fetchImages} />
         </>
       );
     }
