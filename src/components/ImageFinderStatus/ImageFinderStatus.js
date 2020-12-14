@@ -1,13 +1,16 @@
 import { Component } from 'react';
 
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import Loader from 'react-loader-spinner';
+
 import ImageGallery from '../ImageGallery';
 import ImageGalleryItem from '../ImageGalleryItem';
 import Button from '../Button';
 
 class ImageFinderStatus extends Component {
   state = {
+    hits: [],
     error: null,
-    images: [],
     page: 1,
     status: 'idle',
   };
@@ -17,10 +20,16 @@ class ImageFinderStatus extends Component {
     const nextRequest = this.props.request;
     const prevPage = prevState.page;
     const nextPage = this.state.page;
+    // const prevImages = prevState.hits;
+    // console.log('prevImages', prevImages);
+    // const nextImages = this.props.images;
+    // console.log('nextImages', nextImages);
 
     if (prevRequest !== nextRequest || prevPage !== nextPage) {
       const key = '18518367-60788b25c9bdd8e2c754a390a';
       const url = `https://pixabay.com/api/?q=${nextRequest}&page=${nextPage}&key=${key}&image_type=photo&orientation=horizontal&per_page=5`;
+
+      this.setState({ status: 'pending' });
 
       fetch(url)
         .then(response => {
@@ -32,13 +41,15 @@ class ImageFinderStatus extends Component {
             new Error(`Your response about ${nextRequest} is not found`),
           );
         })
-        .then(({ hits }) => this.setState({ images: hits, status: 'resolved' }))
+        .then(({ hits }) => this.setState({ hits, status: 'resolved' }))
         .catch(error => this.setState({ error, status: 'rejected' }));
     }
   }
 
   handleNextPage = () => {
-    this.setState(prevPage => ({ page: prevPage.page + 1 }));
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+    }));
   };
 
   handleFormSubmit = request => {
@@ -46,16 +57,40 @@ class ImageFinderStatus extends Component {
   };
 
   render() {
-    const { images } = this.state;
+    const { hits, error, status } = this.state;
 
-    return (
-      <>
-        <ImageGallery>
-          <ImageGalleryItem images={images} />
-        </ImageGallery>
-        <Button onNextPage={this.handleNextPage} />
-      </>
-    );
+    if (status === 'idle') {
+      return <div></div>;
+    }
+
+    if (status === 'pending') {
+      return (
+        <div className="Loader-wrapper">
+          <Loader
+            type="TailSpin"
+            color="#00BFFF"
+            height={120}
+            width={120}
+            timeout={3000}
+          />
+        </div>
+      );
+    }
+
+    if (status === 'resolved') {
+      return (
+        <>
+          <ImageGallery>
+            <ImageGalleryItem images={hits} />
+          </ImageGallery>
+          <Button onNextPage={this.handleNextPage} />
+        </>
+      );
+    }
+
+    if (status === 'rejected') {
+      return <p>{error.message}</p>;
+    }
   }
 }
 
