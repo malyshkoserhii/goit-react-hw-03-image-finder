@@ -5,14 +5,25 @@ import Modal from '../Modal';
 class ImageGalleryItem extends Component {
   state = {
     modalWindowImage: null,
+    alt: null,
   };
 
-  showModal = largeImageURL => {
-    this.setState({ modalWindowImage: largeImageURL });
+  showModal = (largeImageURL, tags) => {
+    this.setState({
+      modalWindowImage: largeImageURL,
+      alt: tags,
+    });
+  };
+
+  onCloseModal = () => {
+    this.setState({
+      modalWindowImage: null,
+      alt: null,
+    });
   };
 
   render() {
-    const { modalWindowImage } = this.state;
+    const { modalWindowImage, alt } = this.state;
     const { images } = this.props;
 
     return (
@@ -21,20 +32,20 @@ class ImageGalleryItem extends Component {
           <li
             key={id}
             className="ImageGalleryItem"
-            onClick={() => this.showModal(largeImageURL)}
+            onClick={() => this.showModal(largeImageURL, tags)}
           >
             <img
               src={webformatURL}
               alt={tags}
               className="ImageGalleryItem-image"
             />
-            {modalWindowImage && (
-              <Modal>
-                <img src={modalWindowImage} alt={tags} />
-              </Modal>
-            )}
           </li>
         ))}
+        {modalWindowImage && (
+          <Modal onCloseModal={this.onCloseModal}>
+            <img src={modalWindowImage} alt={alt} />
+          </Modal>
+        )}
       </>
     );
   }

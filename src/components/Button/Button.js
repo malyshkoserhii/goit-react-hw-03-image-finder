@@ -1,5 +1,7 @@
 // import s from './Button.module.css';
 
+// import { Component } from 'react';
+
 const Button = ({ onClick }) => {
   window.scrollTo({
     top: document.documentElement.scrollHeight,
