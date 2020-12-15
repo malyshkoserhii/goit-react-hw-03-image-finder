@@ -1,20 +1,19 @@
 import { Component } from 'react';
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import Loader from 'react-loader-spinner';
 
 import Searchbar from './components/Searchbar/Searchbar';
-// import ImageFinderStatus from './components/ImageFinderStatus';
-
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
-// import Loader from 'react-loader-spinner';
-
 import ImageGallery from './components/ImageGallery';
 import ImageGalleryItem from './components/ImageGalleryItem';
 import Button from './components/Button';
+import imagesApi from './services/images-api';
 
 class App extends Component {
   state = {
     searchQuery: '',
     images: [],
     currentPage: 1,
+    error: null,
     status: 'idle',
   };
 
@@ -24,51 +23,64 @@ class App extends Component {
     }
   }
 
-  handleFormSubmit = request => {
-    this.setState({ request });
-  };
-
   onChangeQuery = query => {
-    this.setState({ searchQuery: query, currentPage: 1, images: [] });
+    this.setState({
+      searchQuery: query,
+      currentPage: 1,
+      images: [],
+      error: null,
+    });
   };
 
   fetchImages = () => {
     const { currentPage, searchQuery } = this.state;
 
-    const key = '18518367-60788b25c9bdd8e2c754a390a';
-    const url = `https://pixabay.com/api/?q=${searchQuery}&page=${currentPage}&key=${key}&image_type=photo&orientation=horizontal&per_page=5`;
+    const options = { currentPage, searchQuery };
 
-    fetch(url)
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
+    this.setState({ status: 'pending' });
 
-        return Promise.reject(
-          new Error(`Your response about ${searchQuery} is not found`),
-        );
-      })
-      .then(data =>
-        this.setState(prevState => ({
-          images: [...prevState.images, ...data.hits],
-          currentPage: prevState.currentPage + 1,
-          // status: 'resolved',
-        })),
+    imagesApi
+      .fetchImages(options)
+      .then(({ hits }) =>
+        this.setState(prevState => {
+          if (hits.length > 0) {
+            return {
+              images: [...prevState.images, ...hits],
+              currentPage: prevState.currentPage + 1,
+              status: 'resolved',
+            };
+          }
+        }),
       )
       .catch(error => this.setState({ error, status: 'rejected' }));
   };
 
   render() {
-    const { images } = this.state;
+    const { images, error, status } = this.state;
 
     return (
       <>
         <Searchbar onChangeForm={this.onChangeQuery} />
-        <ImageGallery>
-          <ImageGalleryItem images={images} />
-        </ImageGallery>
-        <Button onClick={this.fetchImages} />
-        {/* <ImageFinderStatus request={request} /> */}
+        {status === 'resolved' && (
+          <>
+            <ImageGallery>
+              <ImageGalleryItem images={images} />
+            </ImageGallery>
+            <Button onClick={this.fetchImages} />
+          </>
+        )}
+        {status === 'pending' && (
+          <div className="Loader-wrapper">
+            <Loader
+              type="TailSpin"
+              color="#00BFFF"
+              height={120}
+              width={120}
+              timeout={3000}
+            />
+          </div>
+        )}
+        {status === 'rejected' && <p>{error.message}</p>}
       </>
     );
   }
