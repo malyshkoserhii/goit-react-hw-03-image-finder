@@ -212,6 +212,9 @@ img {
 */
 
 .Loader-wrapper {
+  position: fixed;
+  top: 50%;
+  left: 50%;
   margin: 0 auto;
   padding: 20px;
   width: 200px;
