@@ -49,7 +49,6 @@ class App extends Component {
           }
         }),
       )
-      // .then(data => console.log(data.hits))
       .catch(error => this.setState({ error }))
       .finally(() => this.setState({ isLoading: false }));
   };
