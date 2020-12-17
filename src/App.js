@@ -4,7 +4,6 @@ import Loader from 'react-loader-spinner';
 
 import Searchbar from './components/Searchbar/Searchbar';
 import ImageGallery from './components/ImageGallery';
-import ImageGalleryItem from './components/ImageGalleryItem';
 import Button from './components/Button';
 import imagesApi from './services/images-api';
 
@@ -14,11 +13,14 @@ class App extends Component {
     images: [],
     currentPage: 1,
     error: null,
-    status: 'idle',
+    isLoading: false,
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.searchQuery !== this.state.searchQuery) {
+    const prevSearchQuery = prevState.searchQuery;
+    const nextSearchQuery = this.state.searchQuery;
+
+    if (prevSearchQuery !== nextSearchQuery) {
       this.fetchImages();
     }
   }
@@ -34,54 +36,46 @@ class App extends Component {
 
   fetchImages = () => {
     const { currentPage, searchQuery } = this.state;
-
     const options = { currentPage, searchQuery };
 
-    this.setState({ status: 'pending' });
+    this.setState({ isLoading: true });
 
     imagesApi
       .fetchImages(options)
       .then(({ hits }) =>
-        this.setState(prevState => {
-          if (hits.length > 0) {
-            return {
-              images: [...prevState.images, ...hits],
-              currentPage: prevState.currentPage + 1,
-              status: 'resolved',
-            };
-          }
-        }),
+        this.setState(prevState => ({
+          images: [...prevState.images, ...hits],
+          currentPage: prevState.currentPage + 1,
+        })),
       )
-      // .then(data => console.log(data.hits))
-      .catch(error => this.setState({ error, status: 'rejected' }));
+      .catch(error => this.setState({ error }))
+      .finally(() => this.setState({ isLoading: false }));
   };
 
   render() {
-    const { images, error, status } = this.state;
+    const { images, error, isLoading } = this.state;
+    const shouldRenderLoadMoreButton = images.length > 0 && !isLoading;
 
     return (
       <>
         <Searchbar onChangeForm={this.onChangeQuery} />
-        {status === 'resolved' && (
-          <>
-            <ImageGallery>
-              <ImageGalleryItem images={images} />
-            </ImageGallery>
-            <Button onClick={this.fetchImages} />
-          </>
-        )}
-        {status === 'pending' && (
-          <div className="Loader-wrapper">
+        {error && <p>{error.message}</p>}
+
+        <ImageGallery images={images} />
+
+        {isLoading && (
+          <div className="Loader-wrapper ">
             <Loader
-              type="TailSpin"
+              type="ThreeDots"
               color="#00BFFF"
-              height={120}
-              width={120}
+              height={80}
+              width={80}
               timeout={3000}
             />
           </div>
         )}
-        {status === 'rejected' && <p>{error.message}</p>}
+
+        {shouldRenderLoadMoreButton && <Button onClick={this.fetchImages} />}
       </>
     );
   }
