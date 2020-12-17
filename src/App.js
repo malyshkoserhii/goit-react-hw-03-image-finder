@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import PropTypes from 'prop-types';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Loader from 'react-loader-spinner';
 
@@ -16,10 +15,6 @@ class App extends Component {
     currentPage: 1,
     error: null,
     status: 'idle',
-  };
-
-  static propTypes = {
-    onCloseModal: PropTypes.func.isRequired,
   };
 
   componentDidUpdate(prevProps, prevState) {
