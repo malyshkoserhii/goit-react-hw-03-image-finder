@@ -17,7 +17,10 @@ class App extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevState.searchQuery !== this.state.searchQuery) {
+    const prevSearchQuery = prevState.searchQuery;
+    const nextSearchQuery = this.state.searchQuery;
+
+    if (prevSearchQuery !== nextSearchQuery) {
       this.fetchImages();
     }
   }
@@ -40,14 +43,10 @@ class App extends Component {
     imagesApi
       .fetchImages(options)
       .then(({ hits }) =>
-        this.setState(prevState => {
-          if (hits.length > 0) {
-            return {
-              images: [...prevState.images, ...hits],
-              currentPage: prevState.currentPage + 1,
-            };
-          }
-        }),
+        this.setState(prevState => ({
+          images: [...prevState.images, ...hits],
+          currentPage: prevState.currentPage + 1,
+        })),
       )
       .catch(error => this.setState({ error }))
       .finally(() => this.setState({ isLoading: false }));
