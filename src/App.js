@@ -1,10 +1,11 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import Loader from 'react-loader-spinner';
 
 import Searchbar from './components/Searchbar/Searchbar';
 import ImageGallery from './components/ImageGallery';
-import ImageGalleryItem from './components/ImageGalleryItem';
+
 import Button from './components/Button';
 import imagesApi from './services/images-api';
 
@@ -15,6 +16,10 @@ class App extends Component {
     currentPage: 1,
     error: null,
     status: 'idle',
+  };
+
+  static propTypes = {
+    onCloseModal: PropTypes.func.isRequired,
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -64,9 +69,8 @@ class App extends Component {
         <Searchbar onChangeForm={this.onChangeQuery} />
         {status === 'resolved' && (
           <>
-            <ImageGallery>
-              <ImageGalleryItem images={images} />
-            </ImageGallery>
+            <ImageGallery images={images} />
+
             <Button onClick={this.fetchImages} />
           </>
         )}

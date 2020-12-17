@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 import Modal from '../Modal';
 // import s from './ImageGalleryItem.module.css';
 
@@ -6,6 +7,10 @@ class ImageGalleryItem extends Component {
   state = {
     modalWindowImage: null,
     alt: null,
+  };
+
+  static propTypes = {
+    images: PropTypes.array.isRequired,
   };
 
   showModal = (largeImageURL, tags) => {

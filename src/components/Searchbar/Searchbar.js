@@ -1,9 +1,14 @@
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 // import s from './Searchbar.module.css';
 
 class Searchbar extends Component {
   state = {
     search: '',
+  };
+
+  static propTypes = {
+    onChangeForm: PropTypes.func.isRequired,
   };
 
   handleRequest = e => {
