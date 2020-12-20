@@ -41,7 +41,7 @@ class App extends Component {
     this.setState({ isLoading: true });
 
     fetchImages({ currentPage, searchQuery })
-      .then(({ hits }) =>
+      .then(hits =>
         this.setState(prevState => ({
           images: [...prevState.images, ...hits],
           currentPage: prevState.currentPage + 1,
