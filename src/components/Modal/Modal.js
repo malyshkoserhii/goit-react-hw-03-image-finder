@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import PropTypes from 'prop-types';
 import Button from '../Button';
 import { FaBeer } from 'react-icons/fa';
-// import s from './Modal.module.css';
+import s from './Modal.module.css';
 
 const modalRoot = document.querySelector('#modal-root');
 
@@ -37,8 +37,8 @@ class Modal extends Component {
     const { children } = this.props;
 
     return createPortal(
-      <div className="Overlay" onClick={this.handleOnBackdropClick}>
-        <div className="Modal">
+      <div className={s.Overlay} onClick={this.handleOnBackdropClick}>
+        <div className={s.Modal}>
           <Button
             type="icon"
             onClick={this.handleOnBackdropClick}

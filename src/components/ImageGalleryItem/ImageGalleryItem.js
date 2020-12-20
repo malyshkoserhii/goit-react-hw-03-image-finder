@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
-// import s from './ImageGalleryItem.module.css';
+import s from './ImageGalleryItem.module.css';
 
 const ImageGalleryItem = ({ image, onClick }) => {
   return (
     <li
-      className="ImageGalleryItem"
+      className={s.ImageGalleryItem}
       onClick={() => onClick(image.largeImageURL, image.tags)}
     >
       <img
         src={image.webformatURL}
         alt={image.tags}
-        className="ImageGalleryItem-image"
+        className={s.ImageGalleryItemImage}
       />
     </li>
   );
@@ -21,7 +21,7 @@ ImageGalleryItem.defaultProps = {
 };
 
 ImageGalleryItem.propTypes = {
-  image: PropTypes.array.isRequired,
+  image: PropTypes.object.isRequired,
   onClick: PropTypes.func.isRequired,
 };
 
