@@ -49,6 +49,10 @@ class ImageGallery extends Component {
   }
 }
 
+ImageGallery.defaultProps = {
+  images: [],
+};
+
 ImageGallery.protoTypes = {
   images: PropTypes.array.isRequired,
 };

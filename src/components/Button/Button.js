@@ -1,32 +1,24 @@
-import { Component } from 'react';
 import PropTypes from 'prop-types';
 // import s from './Button.module.css';
 
-class Button extends Component {
-  static propTypes = {
-    onClick: PropTypes.func.isRequired,
-  };
+const Button = ({ onClick, text, type, icon }) => {
+  return (
+    <button type="button" className="Button" onClick={onClick}>
+      {type === 'icon' ? icon : text}
+    </button>
+  );
+};
 
-  // componentDidMount() {
-  //   window.scrollTo({
-  //     top: document.documentElement.scrollHeight,
-  //     behavior: 'smooth',
-  //   });
-  // }
-
-  render() {
-    const { onClick, text, type, icon } = this.props;
-
-    return (
-      <button type="button" className="Button" onClick={onClick}>
-        {type === 'icon' ? icon : text}
-      </button>
-    );
-  }
-}
+Button.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  text: PropTypes.string.isRequired,
+  icon: PropTypes.element.isRequired,
+};
 
 Button.defaultProps = {
   text: 'Load more',
+  type: 'text',
+  icon: null,
 };
 
 export default Button;

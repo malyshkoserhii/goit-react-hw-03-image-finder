@@ -9,6 +9,7 @@ const modalRoot = document.querySelector('#modal-root');
 
 class Modal extends Component {
   static propTypes = {
+    children: PropTypes.element.isRequired,
     onCloseModal: PropTypes.func.isRequired,
   };
 
@@ -50,5 +51,9 @@ class Modal extends Component {
     );
   }
 }
+
+Modal.defaultProps = {
+  children: <div></div>,
+};
 
 export default Modal;
