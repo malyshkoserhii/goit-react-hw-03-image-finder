@@ -15,5 +15,4 @@ const fetchImages = ({ searchQuery = '', currentPage = 1, perPage = 10 }) => {
   });
 };
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default { fetchImages };
+export default fetchImages;
