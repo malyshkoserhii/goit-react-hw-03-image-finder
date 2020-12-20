@@ -7,22 +7,26 @@ class Button extends Component {
     onClick: PropTypes.func.isRequired,
   };
 
-  componentDidMount() {
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
-      behavior: 'smooth',
-    });
-  }
+  // componentDidMount() {
+  //   window.scrollTo({
+  //     top: document.documentElement.scrollHeight,
+  //     behavior: 'smooth',
+  //   });
+  // }
 
   render() {
-    const { onClick } = this.props;
+    const { onClick, text, type, icon } = this.props;
 
     return (
-      <button type="buttton" className="Button" onClick={onClick}>
-        Load more
+      <button type="button" className="Button" onClick={onClick}>
+        {type === 'icon' ? icon : text}
       </button>
     );
   }
 }
+
+Button.defaultProps = {
+  text: 'Load more',
+};
 
 export default Button;

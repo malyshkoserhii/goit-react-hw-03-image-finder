@@ -5,7 +5,7 @@ import Loader from 'react-loader-spinner';
 import Searchbar from './components/Searchbar/Searchbar';
 import ImageGallery from './components/ImageGallery';
 import Button from './components/Button';
-import imagesApi from './services/images-api';
+import fetchImages from './services/images-api';
 
 class App extends Component {
   state = {
@@ -36,12 +36,10 @@ class App extends Component {
 
   fetchImages = () => {
     const { currentPage, searchQuery } = this.state;
-    const options = { currentPage, searchQuery };
 
     this.setState({ isLoading: true });
 
-    imagesApi
-      .fetchImages(options)
+    fetchImages({ currentPage, searchQuery })
       .then(({ hits }) =>
         this.setState(prevState => ({
           images: [...prevState.images, ...hits],
@@ -49,7 +47,14 @@ class App extends Component {
         })),
       )
       .catch(error => this.setState({ error }))
-      .finally(() => this.setState({ isLoading: false }));
+      .finally(() =>
+        this.setState({ isLoading: false }, () =>
+          window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: 'smooth',
+          }),
+        ),
+      );
   };
 
   render() {
