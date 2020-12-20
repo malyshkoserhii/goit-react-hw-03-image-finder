@@ -2,7 +2,7 @@ import { Component } from 'react';
 import PropTypes from 'prop-types';
 import ImageGalleryItem from '../ImageGalleryItem';
 import Modal from '../Modal';
-// import s from './ImageGallery.module.css';
+import s from './ImageGallery.module.css';
 
 class ImageGallery extends Component {
   state = {
@@ -30,7 +30,7 @@ class ImageGallery extends Component {
 
     return (
       <>
-        <ul className="ImageGallery">
+        <ul className={s.ImageGallery}>
           {images.map(image => (
             <ImageGalleryItem
               key={image.id}
@@ -48,6 +48,10 @@ class ImageGallery extends Component {
     );
   }
 }
+
+ImageGallery.defaultProps = {
+  images: [],
+};
 
 ImageGallery.protoTypes = {
   images: PropTypes.array.isRequired,

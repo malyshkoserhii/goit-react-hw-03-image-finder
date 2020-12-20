@@ -6,6 +6,7 @@ import Searchbar from './components/Searchbar/Searchbar';
 import ImageGallery from './components/ImageGallery';
 import Button from './components/Button';
 import fetchImages from './services/images-api';
+import s from './App.module.css';
 
 class App extends Component {
   state = {
@@ -69,7 +70,7 @@ class App extends Component {
         <ImageGallery images={images} />
 
         {isLoading && (
-          <div className="Loader-wrapper ">
+          <div className={s.LoaderWrapper}>
             <Loader
               type="ThreeDots"
               color="#00BFFF"
