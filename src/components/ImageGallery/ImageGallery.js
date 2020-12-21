@@ -31,9 +31,9 @@ class ImageGallery extends Component {
     return (
       <>
         <ul className={s.ImageGallery}>
-          {images.map(image => (
+          {images.map((image, index) => (
             <ImageGalleryItem
-              key={image.id}
+              key={index}
               image={image}
               onClick={this.showModal}
             />
